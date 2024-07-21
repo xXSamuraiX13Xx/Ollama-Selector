@@ -1,0 +1,41 @@
+#!/bin/bash
+
+tmp_ans="/tmp/ans.txt"
+
+models=$(ollama list | awk 'NR > 1 {print $1}')
+num_models=$(wc -l <<< "$models")
+
+list ()
+{
+  dialog --default-item "codegamma" --clear --title "OLLAMA MODELS" "$@" \
+        --menu "Hi, which model do you want to use?\nModels:" 25 57 4 \
+         $(echo "$models" | sed 's/:/\n/g') 2> "$tmp_ans" \
+         "stop" "stop ollama service" \
+         "start" "start ollama service"
+}
+
+list
+
+ans=$(<"$tmp_ans")
+
+rm /tmp/ans.txt
+
+
+if [[ $ans == "stop" ]]; then
+  clear
+  sudo systemctl stop ollama.service
+  exit 1
+elif [[ $ans == "start" ]]; then
+  clear
+  sudo systemctl start ollama.service
+  sleep .5
+  ollama-selector
+elif [[ $ans == "" ]]; then
+  clear
+  exit 1
+else
+  clear
+  ollama run "$ans"
+fi
+
+
