@@ -30,7 +30,7 @@ elif [[ $ans == "start" ]]; then
   sudo systemctl start ollama.service
   sleep .5
   ollama-selector
-elif [[ $ans == "" ]]; then
+elif [[ $ans == "" || -n $ans ]]; then
   clear
   exit 1
 else
