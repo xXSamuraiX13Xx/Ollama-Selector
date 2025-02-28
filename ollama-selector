@@ -1,7 +1,5 @@
 #!/bin/bash
 
-tmp_ans="/tmp/ans.txt"
-
 models=$(ollama list | awk 'NR > 1 {print $1}')
 num_models=$(wc -l <<< "$models")
 
@@ -9,14 +7,14 @@ list ()
 {
   dialog --default-item "codegamma" --clear --title "OLLAMA MODELS" "$@" \
         --menu "Hi, which model do you want to use?\nModels:" 25 57 4 \
-         $(echo "$models" | sed 's/:/\n/g') 2> "$tmp_ans" \
+         $(echo "$models" | sed 's/:/\n/g') 2> "/tmp/ans.txt" \
          "stop" "stop ollama service" \
          "start" "start ollama service"
 }
 
 list
 
-ans=$(<"$tmp_ans")
+ans=$(<"/tmp/ans.txt")
 
 rm /tmp/ans.txt
 
